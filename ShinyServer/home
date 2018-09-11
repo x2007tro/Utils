@@ -1,0 +1,55 @@
+#
+# Homepage configuration
+# added by Ke Min 2018/09/10
+#
+# helper website
+# https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/
+# https://support.rstudio.com/hc/en-us/articles/213733868-Running-Shiny-Server-with-a-Proxy
+#
+
+server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+	
+	#
+	# This is where the home directory is
+	#
+	root /home/kmin/ShinyApps;
+
+	#
+	# Add index.php to the list if you are using PHP
+	#
+	index index.html;
+
+	server_name _;
+
+	#
+	# Setup default location for homepage
+	#
+	#location /home {
+		# First attempt to serve request as file, then
+		# as directory, then fall back to displaying a 404.
+		#try_files $uri $uri/ =404;
+	#	proxy_pass http://localhost:3838/home;
+	#}
+
+	#
+	# Setup shiny app
+	# Any request sent as SERVER/webapp/APP_NAME
+	# will be directed to shiny server 
+	#
+	location / {
+		# Pass on /kmin/app_name to shiny server
+		proxy_pass http://localhost:3838;
+		proxy_redirect http://localhost:3838/ $scheme://$host/;
+		
+		# Upgrade and connection makes sure client/user interaction is enabled
+		# on some browsers
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection $conn_upgrade;
+		
+		proxy_http_version 1.1;
+		proxy_read_timeout 20d;
+		proxy_buffering off;
+	}
+}
