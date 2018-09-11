@@ -6,6 +6,9 @@
 # https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/
 # https://support.rstudio.com/hc/en-us/articles/213733868-Running-Shiny-Server-with-a-Proxy
 #
+# Default folder: /etc/nginx/sites-available/home
+# Refresh configuration: sudo nginx -s reload
+#
 
 server {
 	listen 80 default_server;
