@@ -9,5 +9,7 @@ Utility functions
   
 2. Ubuntu/ubuntu_cleanup.bash
   - Overview: It cleanup ubuntu system
-  
-3. 
+  - Usage: sh ubuntu_cleanup.bash
+
+3. ShinyServer/home
+  - Overview: Configuration files for nginx and shiny-server

@@ -7,7 +7,7 @@
 # https://support.rstudio.com/hc/en-us/articles/213733868-Running-Shiny-Server-with-a-Proxy
 #
 # Default folder: /etc/nginx/sites-available/home
-# Refresh configuration: sudo nginx -s reload
+# Refresh conf: sudo nginx -s -reload
 #
 
 server {
@@ -37,22 +37,146 @@ server {
 	#}
 
 	#
-	# Setup shiny app
-	# Any request sent as SERVER/webapp/APP_NAME
-	# will be directed to shiny server 
-	#
-	location / {
-		# Pass on /kmin/app_name to shiny server
+	# Shinyapp home
+	# 
+	# It responds to the request server/kmin/home  
+	# and display the shiny application
+        # 
+	location /kmin/home {
+		# Pass on request to shiny server
 		proxy_pass http://localhost:3838;
-		proxy_redirect http://localhost:3838/ $scheme://$host/;
+		proxy_redirect http://localhost:3838/ $scheme://$host/kmin/home/;
 		
 		# Upgrade and connection makes sure client/user interaction is enabled
 		# on some browsers
-		proxy_set_header Upgrade $http_upgrade;
-		proxy_set_header Connection $conn_upgrade;
+		proxy_set_header Upgrade $http_upgrade;   # $http_upgrade is defined in nginx.conf
+		proxy_set_header Connection $conn_upgrade;    # $conn_upgrade is defined in nginx.conf
 		
 		proxy_http_version 1.1;
 		proxy_read_timeout 20d;
 		proxy_buffering off;
 	}
+
+	#
+	# Shinyapp 1: EventCal
+	# 
+	# It responds to the request server/kmin/EventCal  
+	# and display the shiny application
+        # 
+	location /kmin/EventCal {
+		# Pass on request to shiny server
+		proxy_pass http://localhost:3838;
+		proxy_redirect http://localhost:3838/ $scheme://$host/kmin/EventCal/;
+		
+		# Upgrade and connection makes sure client/user interaction is enabled
+		# on some browsers
+		proxy_set_header Upgrade $http_upgrade;   # $http_upgrade is defined in nginx.conf
+		proxy_set_header Connection $conn_upgrade;    # $conn_upgrade is defined in nginx.conf
+		
+		proxy_http_version 1.1;
+		proxy_read_timeout 20d;
+		proxy_buffering off;
+	}
+
+	#
+	# Shinyapp 2: Trader Portal
+	# 
+	# It responds to the request server/kmin/TraderPortal  
+	# and display the shiny application
+        # 
+	location /kmin/TraderPortal {
+		# Pass on request to shiny server
+		proxy_pass http://localhost:3838;
+		proxy_redirect http://localhost:3838/ $scheme://$host/kmin/TraderPortal/;
+		
+		# Upgrade and connection makes sure client/user interaction is enabled
+		# on some browsers
+		proxy_set_header Upgrade $http_upgrade;   # $http_upgrade is defined in nginx.conf
+		proxy_set_header Connection $conn_upgrade;    # $conn_upgrade is defined in nginx.conf
+		
+		proxy_http_version 1.1;
+		proxy_read_timeout 20d;
+		proxy_buffering off;
+
+		# Add auth to this site
+		auth_basic "Restricted Content. Please contact Administrator for Access!";
+		auth_basic_user_file /etc/nginx/.htpasswd;
+	}
+
+	#
+	# Shinyapp 3: Time Tracker
+	# 
+	# It responds to the request server/kmin/TimeTracker  
+	# and display the shiny application
+        # 
+	location /kmin/TimeTracker {
+		# Pass on request to shiny server
+		proxy_pass http://localhost:3838;
+		proxy_redirect http://localhost:3838/ $scheme://$host/kmin/TimeTracker/;
+		
+		# Upgrade and connection makes sure client/user interaction is enabled
+		# on some browsers
+		proxy_set_header Upgrade $http_upgrade;   # $http_upgrade is defined in nginx.conf
+		proxy_set_header Connection $conn_upgrade;    # $conn_upgrade is defined in nginx.conf
+		
+		proxy_http_version 1.1;
+		proxy_read_timeout 20d;
+		proxy_buffering off;
+
+		# Add auth to this site
+		auth_basic "Restricted Content. Please contact Administrator for Access!";
+		auth_basic_user_file /etc/nginx/.htpasswd;
+	}
+	
+	#
+	# Shinyapp 4: Project Management Portal
+	# 
+	# It responds to the request server/kmin/ProjectManagementPortal  
+	# and display the shiny application
+        # 
+	location /kmin/ProjectManagementPortal {
+		# Pass on request to shiny server
+		proxy_pass http://localhost:3838;
+		proxy_redirect http://localhost:3838/ $scheme://$host/kmin/ProjectManagementPortal/;
+		
+		# Upgrade and connection makes sure client/user interaction is enabled
+		# on some browsers
+		proxy_set_header Upgrade $http_upgrade;   # $http_upgrade is defined in nginx.conf
+		proxy_set_header Connection $conn_upgrade;    # $conn_upgrade is defined in nginx.conf
+		
+		proxy_http_version 1.1;
+		proxy_read_timeout 20d;
+		proxy_buffering off;
+
+		# Add auth to this site
+		auth_basic "Restricted Content. Please contact Administrator for Access!";
+		auth_basic_user_file /etc/nginx/.htpasswd;
+	}
+
+	#
+	# Shinyapp 5: Data Sneaker
+	# 
+	# It responds to the request server/kmin/DataSneaker  
+	# and display the shiny application
+        # 
+	location /kmin/DataSneaker {
+		# Pass on request to shiny server
+		proxy_pass http://localhost:3838;
+		proxy_redirect http://localhost:3838/ $scheme://$host/kmin/DataSneaker/;
+		
+		# Upgrade and connection makes sure client/user interaction is enabled
+		# on some browsers
+		proxy_set_header Upgrade $http_upgrade;   # $http_upgrade is defined in nginx.conf
+		proxy_set_header Connection $conn_upgrade;    # $conn_upgrade is defined in nginx.conf
+		
+		proxy_http_version 1.1;
+		proxy_read_timeout 20d;
+		proxy_buffering off;
+
+		# Add auth to this site
+		auth_basic "Restricted Content. Please contact Administrator for Access!";
+		auth_basic_user_file /etc/nginx/.htpasswd;
+	}
+
+	
 }
