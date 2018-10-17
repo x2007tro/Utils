@@ -2,8 +2,8 @@
 # Connect to mysql server
 ##
 ConnMySql <- function(dbn){
-  srv <- "192.168.2.120"
-  prt <- 3774
+  srv <- "192.168.2.200"
+  prt <- 0000
   id <- "dspeast2"
   pwd <- "yuheng"
   
