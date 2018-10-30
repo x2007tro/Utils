@@ -17,3 +17,24 @@ shypka.ddiv <- function(
   
   return(res)
 }
+
+##
+# Create shiny inputs
+##
+shypka.inputs <- function(FUN, len, id_prefix, ...){
+  inputs <- character(len)
+  for (i in seq_len(len)) {
+    inputs[i] <- as.character(FUN(paste0(id_prefix, i), label = NULL, ...))
+  }
+  return(inputs)
+}
+
+##
+# obtain the values of inputs
+##
+shypka.values <- function(len, id_prefix) {
+  unlist(lapply(seq_len(len), function(i) {
+    value = input[[paste0(id_prefix, i)]]
+    if (is.null(value)) NA else value
+  }))
+}
