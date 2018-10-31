@@ -8,7 +8,7 @@
 #
 ##
 
-theme_pka <- function (base_size = 11, base_family = "") 
+theme_pka <- function(base_size = 11, base_family = "") 
 {
   half_line <- base_size/2
   theme(
@@ -37,8 +37,8 @@ theme_pka <- function (base_size = 11, base_family = "")
       debug = FALSE
     ), 
     axis.line = element_line(), 
-    axis.line.x = element_blank(),
-    axis.line.y = element_blank(), 
+    axis.line.x = element_line(),
+    axis.line.y = element_line(), 
     axis.text = element_text(
       size = rel(0.8), 
       colour = "grey30"), 
@@ -104,17 +104,12 @@ theme_pka <- function (base_size = 11, base_family = "")
     legend.justification = "center", 
     legend.box = NULL, 
     panel.background = element_rect(
-      fill = "grey92", 
+      fill = "white", 
       colour = NA
     ), 
     panel.border = element_blank(), 
-    panel.grid.major = element_line(
-      colour = "white"
-    ), 
-    panel.grid.minor = element_line(
-      colour = "white", 
-      size = 0.25
-    ), 
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(), 
     panel.margin = unit(
       half_line, 
       "pt"
