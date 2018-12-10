@@ -81,13 +81,13 @@ server {
 	#
 	# Shinyapp 2: Trader Portal
 	# 
-	# It responds to the request server/kmin/TraderPortal  
+	# It responds to the request server/kmin/MyBroKe  
 	# and display the shiny application
         # 
-	location /kmin/TraderPortal {
+	location /kmin/MyBroKe {
 		# Pass on request to shiny server
 		proxy_pass http://localhost:3838;
-		proxy_redirect http://localhost:3838/ $scheme://$host/kmin/TraderPortal/;
+		proxy_redirect http://localhost:3838/ $scheme://$host/kmin/MyBroKe/;
 		
 		# Upgrade and connection makes sure client/user interaction is enabled
 		# on some browsers
@@ -176,6 +176,27 @@ server {
 		# Add auth to this site
 		auth_basic "Restricted Content. Please contact Administrator for Access!";
 		auth_basic_user_file /etc/nginx/.htpasswd;
+	}
+
+	#
+	# Shinyapp 6: Doc Repo
+	# 
+	# It responds to the request server/kmin/DocRepo  
+	# and display the shiny application
+        # 
+	location /kmin/DocRepo {
+		# Pass on request to shiny server
+		proxy_pass http://localhost:3838;
+		proxy_redirect http://localhost:3838/ $scheme://$host/kmin/DocRepo/;
+		
+		# Upgrade and connection makes sure client/user interaction is enabled
+		# on some browsers
+		proxy_set_header Upgrade $http_upgrade;   # $http_upgrade is defined in nginx.conf
+		proxy_set_header Connection $conn_upgrade;    # $conn_upgrade is defined in nginx.conf
+		
+		proxy_http_version 1.1;
+		proxy_read_timeout 20d;
+		proxy_buffering off;
 	}
 
 	
