@@ -1,49 +1,51 @@
 ##
-# Connect to mysql server
+# dbj format
 ##
-ConnMySql <- function(dbn){
-  srv <- "192.168.2.200"
-  prt <- 0000
-  id <- "dspeast2"
-  pwd <- "yuheng"
-  
-  conn <- DBI::dbConnect(drv = RMariaDB::MariaDB(),
-                         user = id,
-                         password = pwd,
-                         dbname = dbn,
-                         host = srv,
-                         port = prt)
-  return(conn)
-}
+db_obj <- list(
+  dbtype = c('MariaDB', 'MSSQLServer_SqlAuth', 'MSSQLServer_WinAuth', 'MSAccessDB')[1],
+  srv = c('192.168.2.200', '192.168.2.200,0000')[1],     # 1st for MariaDB | 2nd for MSSqlServer
+  prt = 0000,                                            # not required for MSSqlServer
+  dbn = 'database_name_str',
+  id = 'login_id_str',                                   # not required for MSSqlServer_WinAuth
+  pwd = 'login_password_str',                            # not required for MSSqlServer_WinAuth
+  path = 'MSAccess_DB_path'                              # only required for MSAccess
+)
 
 ##
-# Connect to sql server - windows authentication
+# Connect to mariaDB/mysql server
 ##
-ConnSqlServer_WinAuth <- function(dbn){
-  srv <- "192.168.2.120"
-  
-  conn <- DBI::dbConnect(drv = odbc::odbc(),
-                         Driver = "ODBC Driver 17 for SQL Server",
-                         Server = srv,
-                         Database = dbn,
-                         trusted_connection = "yes")
+ConnMariaDB <- function(db_obj){
+  conn <- DBI::dbConnect(drv = RMariaDB::MariaDB(),
+                         user = db_obj$id,
+                         password = db_obj$pwd,
+                         dbname = db_obj$dbn,
+                         host = db_obj$srv,
+                         port = db_obj$prt)
   return(conn)
 }
 
 ##
 # Connect to sql server - SQL authentication
 ##
-ConnSqlServer_SQLAuth <- function(dbn){
-  srv <- "192.168.2.120"
-  id <- "dspeast2"
-  pwd <- "yuheng"
-  
+ConnMSSqlServer_SQLAuth <- function(db_obj){
   conn <- DBI::dbConnect(drv = odbc::odbc(),
                          Driver = "ODBC Driver 17 for SQL Server",
-                         Server = srv,
-                         Database = dbn,
-                         UID = id,
-                         PWD = pwd)
+                         Server = db_obj$srv,
+                         Database = db_obj$dbn,
+                         UID = db_obj$id,
+                         PWD = db_obj$pwd)
+  return(conn)
+}
+
+##
+# Connect to sql server - windows authentication
+##
+ConnMSSqlServer_WinAuth <- function(db_obj){
+  conn <- DBI::dbConnect(drv = odbc::odbc(),
+                         Driver = "ODBC Driver 17 for SQL Server",
+                         Server = db_obj$srv,
+                         Database = db_obj$dbn,
+                         trusted_connection = "yes")
   return(conn)
 }
 
@@ -51,11 +53,10 @@ ConnSqlServer_SQLAuth <- function(dbn){
 # Connect to access database
 # dbp : database path
 ##
-ConnAccess <- function(dbp){
-  
+ConnMSAccess <- function(db_obj){
   conn <- DBI::dbConnect(drv = odbc::odbc(),
                          Driver = "Microsoft Access Driver (*.mdb, *.accdb)",
-                         DBQ = dbp)
+                         DBQ = db_obj$path)
   return(conn)
 }
 
@@ -66,7 +67,19 @@ ConnAccess <- function(dbp){
 # Read a table from sel server db
 ##
 ReadDataFromSS <- function(db_obj, tbl_name){
-  conn <- ConnMySql(db_obj) # conn can be SQL Server, MySql or Access database
+  # establish connection to DB
+  if(db_obj$dbtype == 'MariaDB'){
+    conn <- ConnMariaDB(db_obj)
+  } else if (db_obj$dbtype == 'MSSQLServer_SqlAuth') {
+    conn <- ConnMSSqlServer_SQLAuth(db_obj)
+  } else if (db_obj$dbtype == 'MSSQLServer_WinAuth') {
+    conn <- ConnMSSqlServer_WinAuth(db_obj)
+  } else if (db_obj$dbtype == 'MSAccessDB') {
+    conn <- ConnMSAccess(db_obj)
+  } else {
+    conn <- NULL
+  }
+  
   df <- DBI::dbReadTable(conn, tbl_name)
   DBI::dbDisconnect(conn)  
   return(df)
@@ -76,7 +89,19 @@ ReadDataFromSS <- function(db_obj, tbl_name){
 # Write a table to sql server db
 ##
 WriteDataToSS <- function(db_obj, data, tbl_name, apd = FALSE){
-  conn <- ConnMySql(db_obj)
+  # establish connection to DB
+  if(db_obj$dbtype == 'MariaDB'){
+    conn <- ConnMariaDB(db_obj)
+  } else if (db_obj$dbtype == 'MSSQLServer_SqlAuth') {
+    conn <- ConnMSSqlServer_SQLAuth(db_obj)
+  } else if (db_obj$dbtype == 'MSSQLServer_WinAuth') {
+    conn <- ConnMSSqlServer_WinAuth(db_obj)
+  } else if (db_obj$dbtype == 'MSAccessDB') {
+    conn <- ConnMSAccess(db_obj)
+  } else {
+    conn <- NULL
+  }
+  
   df <- DBI::dbWriteTable(conn, name = tbl_name, value = data,
                           append = apd, overwrite = !apd, row.names = FALSE)
   DBI::dbDisconnect(conn) 				  
@@ -87,7 +112,19 @@ WriteDataToSS <- function(db_obj, data, tbl_name, apd = FALSE){
 # List all tables and queries
 ##
 ListTblsFromSS <- function(db_obj){
-  conn <- ConnMySql(db_obj)
+  # establish connection to DB
+  if(db_obj$dbtype == 'MariaDB'){
+    conn <- ConnMariaDB(db_obj)
+  } else if (db_obj$dbtype == 'MSSQLServer_SqlAuth') {
+    conn <- ConnMSSqlServer_SQLAuth(db_obj)
+  } else if (db_obj$dbtype == 'MSSQLServer_WinAuth') {
+    conn <- ConnMSSqlServer_WinAuth(db_obj)
+  } else if (db_obj$dbtype == 'MSAccessDB') {
+    conn <- ConnMSAccess(db_obj)
+  } else {
+    conn <- NULL
+  }
+  
   dfs_tn <- DBI::dbListTables(conn, scheme = "dbo")
   DBI::dbDisconnect(conn)
   return(dfs_tn)
@@ -97,7 +134,19 @@ ListTblsFromSS <- function(db_obj){
 # Send query to db
 ##
 GetQueryResFromSS <- function(db_obj, qry_str){
-  conn <- ConnMySql(db_obj)
+  # establish connection to DB
+  if(db_obj$dbtype == 'MariaDB'){
+    conn <- ConnMariaDB(db_obj)
+  } else if (db_obj$dbtype == 'MSSQLServer_SqlAuth') {
+    conn <- ConnMSSqlServer_SQLAuth(db_obj)
+  } else if (db_obj$dbtype == 'MSSQLServer_WinAuth') {
+    conn <- ConnMSSqlServer_WinAuth(db_obj)
+  } else if (db_obj$dbtype == 'MSAccessDB') {
+    conn <- ConnMSAccess(db_obj)
+  } else {
+    conn <- NULL
+  }
+  
   qry_conn <- DBI::dbSendQuery(conn, qry_str)
   res <- DBI::dbFetch(qry_conn)
   DBI::dbClearResult(qry_conn)
