@@ -11,5 +11,14 @@ Utility functions
   - Overview: It cleanup ubuntu system
   - Usage: sh ubuntu_cleanup.bash
 
-3. ShinyServer/home
+3. Ubuntu/git_pull_all.bash
+  - Overview: It updates all existing git repos
+  - Usage: sh git_pull_all.bash
+
+4. ShinyServer/home
   - Overview: Configuration files for nginx and shiny-server
+
+## new webapp addition
+1. Clone the repo to Ubuntu server, use command git clone https://github.com/x200tro/REPO_NAME.git
+2. Install all required packages on Ubuntu server, use install_r_pkgs.bash /home/kmin/ShinyApps/REPO_NAME/README.md
+3. Add the new webapp to ShinyServer/home
